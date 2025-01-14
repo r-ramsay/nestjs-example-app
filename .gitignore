@@ -7,7 +7,6 @@ coverage/
 .DS_Store
 
 prisma/dbml
-.env
 
 npm-debug.log
 /bruno/NestJS Example app/environments/Production.bru
