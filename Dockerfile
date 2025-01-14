@@ -13,10 +13,18 @@ RUN npm install dotenv
 RUN npm ci --only=production
 RUN npm i
 
-# Set a dummy DATABASE_URL during build
-ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy_db"
+# Install PostgreSQL for build-time database setup
+RUN apt-get update && apt-get install -y postgresql && apt-get clean
 
-# Run the setup script
+# Start PostgreSQL service and create the database
+RUN service postgresql start && \
+    psql -U postgres -c "CREATE DATABASE dummy_db;" && \
+    psql -U postgres -c "ALTER USER postgres PASSWORD 'dummy';"
+
+# Set up a database URL for the build
+ENV DATABASE_URL="postgresql://postgres:dummy@localhost:5432/dummy_db"
+
+# Run the setup script (migrations and seeds)
 RUN npm run setup
 
 COPY . .
@@ -34,7 +42,7 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/.env .env
 
-# Add PostgreSQL client if needed
+# Add PostgreSQL client for runtime needs
 RUN apt-get update && apt-get install -y postgresql-client && apt-get clean
 
 # Expose application port
