@@ -47,10 +47,6 @@ async function bootstrap() {
   );
 
   app.use(cookieParser());
-  app.enableCors({
-    origin: ['http://localhost:4200', 'https://angular-example-app.netlify.app'],
-    credentials: true,
-  });
 
   const API_VERSION = 'v1';
   app.setGlobalPrefix(API_VERSION);
