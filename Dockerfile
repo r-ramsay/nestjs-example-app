@@ -16,12 +16,16 @@ RUN npm i
 # Install PostgreSQL for build-time database setup
 RUN apt-get update && apt-get install -y postgresql && apt-get clean
 
-# Start PostgreSQL service and create the database
+# Update PostgreSQL authentication to use password authentication
+RUN sed -i "s/peer/trust/g" /etc/postgresql/*/main/pg_hba.conf && \
+    sed -i "s/md5/trust/g" /etc/postgresql/*/main/pg_hba.conf
+
+# Start PostgreSQL and configure the database
 RUN service postgresql start && \
     psql -U postgres -c "CREATE DATABASE dummy_db;" && \
     psql -U postgres -c "ALTER USER postgres PASSWORD 'dummy';"
 
-# Set up a database URL for the build
+# Set a database URL for the build phase
 ENV DATABASE_URL="postgresql://postgres:dummy@localhost:5432/dummy_db"
 
 # Run the setup script (migrations and seeds)
