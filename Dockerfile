@@ -7,6 +7,10 @@ COPY prisma ./prisma/
 
 RUN npm ci --only=production
 
+RUN npm i
+
+RUN npm run setup
+
 COPY . .
 
 RUN npm run build
