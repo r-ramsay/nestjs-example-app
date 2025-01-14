@@ -1,12 +1,8 @@
 .idea
 node_modules/
-dist/
-prisma/*.db
 coverage/
 
 .DS_Store
-
-prisma/dbml
 
 npm-debug.log
 /bruno/NestJS Example app/environments/Production.bru
