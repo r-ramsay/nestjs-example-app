@@ -12,9 +12,11 @@ COPY .env .env
 RUN npm ci --only=production
 RUN npm i
 
-# Load environment variables from .env during the setup process
-ARG ENV_FILE=.env
-RUN export $(cat $ENV_FILE | xargs) && npm run setup
+# Load environment variables from .env (skip comments and blank lines)
+RUN set -a && \
+    grep -vE '^\s*#' .env | grep -vE '^\s*$' > .env.filtered && \
+    . .env.filtered && \
+    npm run setup
 
 COPY . .
 
