@@ -9,14 +9,12 @@ COPY prisma ./prisma/
 COPY .env .env
 
 # Install dependencies
+RUN npm install dotenv
 RUN npm ci --only=production
 RUN npm i
 
-# Load environment variables from .env (skip comments and blank lines)
-RUN set -a && \
-    grep -vE '^\s*#' .env | grep -vE '^\s*$' > .env.filtered && \
-    . .env.filtered && \
-    npm run setup
+# Run the setup script (dotenv handles loading .env)
+RUN npm run setup
 
 COPY . .
 
