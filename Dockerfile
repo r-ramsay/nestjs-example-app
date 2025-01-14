@@ -20,10 +20,13 @@ RUN apt-get update && apt-get install -y postgresql && apt-get clean
 RUN sed -i "s/peer/trust/g" /etc/postgresql/*/main/pg_hba.conf && \
     sed -i "s/md5/trust/g" /etc/postgresql/*/main/pg_hba.conf
 
-# Start PostgreSQL and configure the database
+# Start PostgreSQL service and configure the database
 RUN service postgresql start && \
     psql -U postgres -c "CREATE DATABASE dummy_db;" && \
     psql -U postgres -c "ALTER USER postgres PASSWORD 'dummy';"
+
+# Wait for PostgreSQL to be ready
+RUN until pg_isready -h localhost -p 5432 -U postgres; do echo "Waiting for PostgreSQL..."; sleep 1; done
 
 # Set a database URL for the build phase
 ENV DATABASE_URL="postgresql://postgres:dummy@localhost:5432/dummy_db"
