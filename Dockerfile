@@ -13,7 +13,10 @@ RUN npm install dotenv
 RUN npm ci --only=production
 RUN npm i
 
-# Run the setup script (dotenv handles loading .env)
+# Set a dummy DATABASE_URL during build
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy_db"
+
+# Run the setup script
 RUN npm run setup
 
 COPY . .
